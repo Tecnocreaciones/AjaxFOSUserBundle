@@ -2,7 +2,7 @@
     "name": "tecnocreaciones/ajax-fos-user-bundle",
     "description": "Provides authentication for ajax to FOSUserbundle",
     "keywords": ["User ajax management"],
-    "homepage": "http://friendsofsymfony.github.com",
+    "homepage": "https://github.com/tecnocreaciones",
     "type": "symfony-bundle",
     "license": "MIT",
     "authors": [
