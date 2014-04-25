@@ -20,7 +20,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 /**
  * Description of FlashListener
  *
- * @author Carlos Mendoza <inhack20@tecnocreaciones.com.ve>
+ * @author Carlos Mendoza <inhack20@tecnocreaciones.com>
  */
 class FlashListener implements EventSubscriberInterface 
 {

@@ -16,7 +16,7 @@ use FOS\UserBundle\EventListener\EmailConfirmationListener as BaseListener;
 /**
  * Description of EmailConfirmationListener
  *
- * @author Carlos Mendoza <inhack20@tecnocreaciones.com.ve>
+ * @author Carlos Mendoza <inhack20@tecnocreaciones.com>
  */
 class EmailConfirmationListener extends BaseListener
 {

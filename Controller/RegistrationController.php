@@ -25,7 +25,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 /**
  * Manejador de registro de FOSUserBundle por Ajax
  *
- * @author Carlos Mendoza <inhack20@tecnocreaciones.com.ve>
+ * @author Carlos Mendoza <inhack20@tecnocreaciones.com>
  */
 class RegistrationController extends BaseController
 {

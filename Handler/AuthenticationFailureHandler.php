@@ -9,7 +9,7 @@ use Symfony\Component\Security\Http\Authentication\DefaultAuthenticationFailureH
 /**
  * Description of AuthenticationFailureHandler
  *
- * @author Carlos Mendoza <inhack20@tecnocreaciones.com.ve>
+ * @author Carlos Mendoza <inhack20@tecnocreaciones.com>
  */
 class AuthenticationFailureHandler extends DefaultAuthenticationFailureHandler
 {

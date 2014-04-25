@@ -16,7 +16,7 @@ use FOS\UserBundle\Controller\SecurityController as BaseController;
 /**
  * Description of SecurityController
  *
- * @author Carlos Mendoza <inhack20@tecnocreaciones.com.ve>
+ * @author Carlos Mendoza <inhack20@tecnocreaciones.com>
  */
 class SecurityController extends BaseController
 {

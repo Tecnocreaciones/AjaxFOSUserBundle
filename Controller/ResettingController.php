@@ -16,7 +16,7 @@ use FOS\UserBundle\Controller\ResettingController as BaseController;
 /**
  * Description of ResettingController
  *
- * @author Carlos Mendoza <inhack20@tecnocreaciones.com.ve>
+ * @author Carlos Mendoza <inhack20@tecnocreaciones.com>
  */
 class ResettingController extends BaseController
 {
