@@ -20,7 +20,8 @@ use FOS\UserBundle\Controller\ResettingController as BaseController;
  */
 class ResettingController extends BaseController
 {
-    public function sendEmailAction(\Symfony\Component\HttpFoundation\Request $request) {
+    public function sendEmailAction() {
+        $request = $this->container->get('request');
         if($request->isXmlHttpRequest()){
             $data = array();
             $response = new \Symfony\Component\HttpFoundation\JsonResponse();

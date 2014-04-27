@@ -29,59 +29,98 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class RegistrationController extends BaseController
 {
-    public function registerAction(Request $request) {
+    public function registerAction()
+    {
+        $request = $this->container->get('request');
         if($request->isXmlHttpRequest()){
             $view = View::create();
             $view->setFormat('json');
             $response = new JsonResponse();
-            /** @var $formFactory \FOS\UserBundle\Form\Factory\FactoryInterface */
-            $formFactory = $this->container->get('fos_user.registration.form.factory');
-            /** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
-            $userManager = $this->container->get('fos_user.user_manager');
-            /** @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
-            $dispatcher = $this->container->get('event_dispatcher');
+            
+            //Backward compatibility with Fos User 1.3
+            if(class_exists('FOS\UserBundle\FOSUserEvents')){
+                /** @var $formFactory \FOS\UserBundle\Form\Factory\FactoryInterface */
+                $formFactory = $this->container->get('fos_user.registration.form.factory');
+                /** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
+                $userManager = $this->container->get('fos_user.user_manager');
+                /** @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
+                $dispatcher = $this->container->get('event_dispatcher');
 
-            $user = $userManager->createUser();
-            $user->setEnabled(true);
+                $user = $userManager->createUser();
+                $user->setEnabled(true);
 
-            $event = new GetResponseUserEvent($user, $request);
-            $dispatcher->dispatch(FOSUserEvents::REGISTRATION_INITIALIZE, $event);
+                $event = new GetResponseUserEvent($user, $request);
+                $dispatcher->dispatch(FOSUserEvents::REGISTRATION_INITIALIZE, $event);
 
-            if (null !== $event->getResponse()) {
-                return $event->getResponse();
-            }
+                if (null !== $event->getResponse()) {
+                    return $event->getResponse();
+                }
 
-            $form = $formFactory->createForm();
-            $form->setData($user);
+                $form = $formFactory->createForm();
+                $form->setData($user);
 
-            if ('POST' === $request->getMethod()) {
-                $form->bind($request);
+                if ('POST' === $request->getMethod()) {
+                    $form->bind($request);
 
-                if ($form->isValid()) {
-                    $targetUrl = '';
-                    if($this->getSession()){
-                        $session = $this->getSession();
-                        if(($token = $this->container->get('security.context')->getToken()) && is_a($token, 'Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken')){
-                            $targetUrl = $session->get('_security.' .$token->getProviderKey(). '.target_path');
+                    if ($form->isValid()) {
+                        $targetUrl = '';
+                        if($this->getSession()){
+                            $session = $this->getSession();
+                            if(($token = $this->container->get('security.context')->getToken()) && is_a($token, 'Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken')){
+                                $targetUrl = $session->get('_security.' .$token->getProviderKey(). '.target_path');
+                            }
                         }
+                        $event = new FormEvent($form, $request);
+                        $dispatcher->dispatch(FOSUserEvents::REGISTRATION_SUCCESS, $event);
+
+                        $userManager->updateUser($user);
+
+                        if (null === $response = $event->getResponse()) {
+                            $url = $this->container->get('router')->generate('fos_user_registration_confirmed');
+                            $response = new JsonResponse();
+                            $data = array(
+                                'message' => $this->trans('registration.confirmed',array('%username%' => $user->getUserName())),
+                                'targetUrl' => $targetUrl,
+                            );
+                            $response->setData($data);
+                        }
+
+                        $dispatcher->dispatch(FOSUserEvents::REGISTRATION_COMPLETED, new FilterUserResponseEvent($user, $request, $response));
+
+                        return $response;
                     }
-                    $event = new FormEvent($form, $request);
-                    $dispatcher->dispatch(FOSUserEvents::REGISTRATION_SUCCESS, $event);
+                }
+            }else{
+                $form = $this->container->get('fos_user.registration.form');
+                $formHandler = $this->container->get('fos_user.registration.form.handler');
+                $confirmationEnabled = $this->container->getParameter('fos_user.registration.confirmation.enabled');
 
-                    $userManager->updateUser($user);
+                $process = $formHandler->process($confirmationEnabled);
+                if ($process) {
+                    $user = $form->getData();
 
-                    if (null === $response = $event->getResponse()) {
-                        $url = $this->container->get('router')->generate('fos_user_registration_confirmed');
-                        $response = new JsonResponse();
-                        $data = array(
-                            'message' => $this->trans('registration.confirmed',array('%username%' => $user->getUserName())),
-                            'targetUrl' => $targetUrl,
-                        );
-                        $response->setData($data);
+                    $authUser = false;
+                    if ($confirmationEnabled) {
+                        $this->container->get('session')->set('fos_user_send_confirmation_email/email', $user->getEmail());
+                        $route = 'fos_user_registration_check_email';
+                    } else {
+                        $authUser = true;
+                        $route = 'fos_user_registration_confirmed';
                     }
 
-                    $dispatcher->dispatch(FOSUserEvents::REGISTRATION_COMPLETED, new FilterUserResponseEvent($user, $request, $response));
+                    $this->setFlash('fos_user_success', 'registration.flash.user_created');
+                    $url = $this->container->get('router')->generate($route);
+                    $response = new JsonResponse();
+                    $data = array(
+                        'message' => $this->trans('registration.confirmed',array('%username%' => $user->getUserName())),
+                        'targetUrl' => $url,
+                    );
+                    $response->setData($data);
 
+                    if ($authUser) {
+                        $this->authenticateUser($user, $response);
+                    }
+                    
                     return $response;
                 }
             }

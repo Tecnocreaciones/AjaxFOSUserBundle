@@ -25,10 +25,16 @@ class SecurityController extends BaseController
      * @param array $data
      * @return type
      */
-    protected function renderLogin(array $data) {
-        /** @var $formFactory \FOS\UserBundle\Form\Factory\FactoryInterface */
-        $formFactory = $this->container->get('fos_user.registration.form.factory');
-        $form = $formFactory->createForm();
+    protected function renderLogin(array $data)
+    {
+        //Backward compatibility with Fos User 1.3
+        if(class_exists('FOS\UserBundle\FOSUserEvents')){
+            /** @var $formFactory \FOS\UserBundle\Form\Factory\FactoryInterface */
+            $formFactory = $this->container->get('fos_user.registration.form.factory');
+            $form = $formFactory->createForm();
+        }else{
+            $form = $this->container->get('fos_user.registration.form');
+        }
         $csrf_token_register = $form->createView()->children['_token']->vars['value'];
         $data['csrf_token_register'] = $csrf_token_register;
         
