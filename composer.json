@@ -17,7 +17,7 @@
         "symfony/framework-bundle": "~2.1",
         "symfony/form": "~2.1",
         "symfony/security-bundle": "~2.1",
-        "friendsofsymfony/user-bundle": "@stable"
+        "friendsofsymfony/user-bundle": "2.0.*@dev"
     },
     "autoload": {
         "psr-0": { "Tecnocreaciones\\Bundle\\AjaxFOSUserBundle": "" }
