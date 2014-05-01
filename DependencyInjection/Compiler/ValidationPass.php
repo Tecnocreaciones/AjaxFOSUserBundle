@@ -25,11 +25,14 @@ class ValidationPass implements CompilerPassInterface
             return;
         }
         if($container->getParameter('fos_user.registration.confirmation.enabled') == true){
-            $definition = $container->getDefinition('fos_user.listener.email_confirmation');
-            $definition
-                    ->setClass('Tecnocreaciones\Bundle\AjaxFOSUserBundle\EventListener\EmailConfirmationListener')
-                    ->addMethodCall('setTranslator',array($container->getDefinition('translator.default')))
-                    ;
+            //Backward compatibility with Fos User 1.3
+            if(class_exists('FOS\UserBundle\FOSUserEvents')){
+                $definition = $container->getDefinition('fos_user.listener.email_confirmation');
+                $definition
+                        ->setClass('Tecnocreaciones\Bundle\AjaxFOSUserBundle\EventListener\EmailConfirmationListener')
+                        ->addMethodCall('setTranslator',array($container->getDefinition('translator.default')))
+                        ;
+            }
         }
         
     }
