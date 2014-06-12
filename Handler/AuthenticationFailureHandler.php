@@ -21,9 +21,13 @@ class AuthenticationFailureHandler extends DefaultAuthenticationFailureHandler
     
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception) {
         if($request->isXmlHttpRequest()){
-            
+            $message = $exception->getMessage();
+            $messageTrans = $this->translator->trans($message,array(),'FOSUserBundle');
+            if($messageTrans === $message){
+                $messageTrans = $this->translator->trans($message,array(),'security');
+            }
             $data = array(
-                'message' => $this->translator->trans($exception->getMessage(),array(),'FOSUserBundle'),
+                'message' => $messageTrans,
             );
             $response = new \Symfony\Component\HttpFoundation\JsonResponse($data,400);
             return $response;
