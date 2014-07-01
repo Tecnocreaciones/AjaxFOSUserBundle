@@ -17,6 +17,7 @@
                 <argument  type="service" id="translator" />
             </call>
         </service>
+        
         <service id="security.authentication.failure_handler" class="%security.authentication.failure_handler.class%" abstract="true" public="false">
             <tag name="monolog.logger" channel="security" />
             <argument type="service" id="http_kernel" />
@@ -25,6 +26,22 @@
             <argument type="service" id="logger" on-invalid="null" />
             <call method="setTranslator">
                 <argument  type="service" id="translator" />
+            </call>
+        </service>
+        
+        <service id="fos_user.registration.form.handler.default" class="Tecnocreaciones\Bundle\AjaxFOSUserBundle\Handler\RegistrationFormHandler" scope="request">
+            <argument type="service" id="fos_user.registration.form" />
+            <argument type="service" id="request" />
+            <argument type="service" id="fos_user.user_manager" />
+            <argument type="service" id="fos_user.mailer" />
+            <argument type="service" id="fos_user.util.token_generator" />
+            <argument type="service" id="event_dispatcher" />
+        </service>
+        <!-- Servicio necesario para el RegistrationListener -->
+        <service id="seip.listener.registration" class="Pequiven\SEIPBundle\EventListener\RegistrationListener">
+            <tag name="kernel.event_subscriber" />
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
             </call>
         </service>
     </services>
