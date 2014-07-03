@@ -37,12 +37,5 @@
             <argument type="service" id="fos_user.util.token_generator" />
             <argument type="service" id="event_dispatcher" />
         </service>
-        <!-- Servicio necesario para el RegistrationListener -->
-        <service id="seip.listener.registration" class="Pequiven\SEIPBundle\EventListener\RegistrationListener">
-            <tag name="kernel.event_subscriber" />
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
-        </service>
     </services>
 </container>

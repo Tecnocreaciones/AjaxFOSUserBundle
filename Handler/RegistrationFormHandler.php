@@ -17,11 +17,9 @@ use FOS\UserBundle\Mailer\MailerInterface;
 use FOS\UserBundle\Util\TokenGeneratorInterface;
 use Tecnocreaciones\Bundle\AjaxFOSUserBundle\FOSUserEvents;
 use Tecnocreaciones\Bundle\AjaxFOSUserBundle\Event\FormEvent;
-use Pequiven\SEIPBundle\EventListener\RegistrationListener;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class RegistrationFormHandler
 {
@@ -69,10 +67,6 @@ class RegistrationFormHandler
     protected function onSuccess(UserInterface $user, $confirmation)
     {
         
-        $dispatcher = new EventDispatcher();
-        $listener = new RegistrationListener();
-        $dispatcher->addListener(FOSUserEvents::REGISTRATION_SUCCESS, array($listener,'onRegistrationSuccess'));
-        
         if ($confirmation) {
             $user->setEnabled(false);
             if (null === $user->getConfirmationToken()) {
@@ -87,10 +81,6 @@ class RegistrationFormHandler
         $event = new FormEvent($this->form, $this->request);
         $this->event_dispatcher->dispatch(FOSUserEvents::REGISTRATION_SUCCESS, $event);
         
-//        echo $event->getRequest()->get('role');
-//        if($event->isPropagationStopped() == false)
-//            echo 'adios';
-
         $this->userManager->updateUser($user);
     }
 
