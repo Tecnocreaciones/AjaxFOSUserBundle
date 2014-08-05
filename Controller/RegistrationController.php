@@ -38,7 +38,40 @@ class RegistrationController extends BaseController
             $response = new JsonResponse();
             
             //Backward compatibility with Fos User 1.3
-            if(class_exists('FOS\UserBundle\FOSUserEvents')){
+            if(!class_exists('FOS\UserBundle\FOSUserEvents')){
+                $form = $this->container->get('fos_user.registration.form');
+                $formHandler = $this->container->get('fos_user.registration.form.handler');
+                $confirmationEnabled = $this->container->getParameter('fos_user.registration.confirmation.enabled');
+
+                $process = $formHandler->process($confirmationEnabled);
+                if ($process) {
+                    $user = $form->getData();
+
+                    $authUser = false;
+                    if ($confirmationEnabled) {
+                        $this->container->get('session')->set('fos_user_send_confirmation_email/email', $user->getEmail());
+                        $route = 'fos_user_registration_check_email';
+                    } else {
+                        $authUser = true;
+                        $route = 'fos_user_registration_confirmed';
+                    }
+
+                    $this->setFlash('fos_user_success', 'registration.flash.user_created');
+                    $url = $this->container->get('router')->generate($route);
+                    $response = new JsonResponse();
+                    $data = array(
+                        'message' => $this->trans('registration.confirmed',array('%username%' => $user->getUserName())),
+                        'targetUrl' => $url,
+                    );
+                    $response->setData($data);
+
+                    if ($authUser) {
+                        $this->authenticateUser($user, $response);
+                    }
+                    
+                    return $response;
+                }
+            }else{
                 /** @var $formFactory \FOS\UserBundle\Form\Factory\FactoryInterface */
                 $formFactory = $this->container->get('fos_user.registration.form.factory');
                 /** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
@@ -89,39 +122,6 @@ class RegistrationController extends BaseController
 
                         return $response;
                     }
-                }
-            }else{
-                $form = $this->container->get('fos_user.registration.form');
-                $formHandler = $this->container->get('fos_user.registration.form.handler');
-                $confirmationEnabled = $this->container->getParameter('fos_user.registration.confirmation.enabled');
-
-                $process = $formHandler->process($confirmationEnabled);
-                if ($process) {
-                    $user = $form->getData();
-
-                    $authUser = false;
-                    if ($confirmationEnabled) {
-                        $this->container->get('session')->set('fos_user_send_confirmation_email/email', $user->getEmail());
-                        $route = 'fos_user_registration_check_email';
-                    } else {
-                        $authUser = true;
-                        $route = 'fos_user_registration_confirmed';
-                    }
-
-                    $this->setFlash('fos_user_success', 'registration.flash.user_created');
-                    $url = $this->container->get('router')->generate($route);
-                    $response = new JsonResponse();
-                    $data = array(
-                        'message' => $this->trans('registration.confirmed',array('%username%' => $user->getUserName())),
-                        'targetUrl' => $url,
-                    );
-                    $response->setData($data);
-
-                    if ($authUser) {
-                        $this->authenticateUser($user, $response);
-                    }
-                    
-                    return $response;
                 }
             }
             $view->setData($form);
