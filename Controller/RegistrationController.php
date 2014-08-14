@@ -51,17 +51,20 @@ class RegistrationController extends BaseController
                     if ($confirmationEnabled) {
                         $this->container->get('session')->set('fos_user_send_confirmation_email/email', $user->getEmail());
                         $route = 'fos_user_registration_check_email';
+                        $message = $this->trans('registration.check_email',array('%email%' => $user->getEmail()));
                     } else {
                         $authUser = true;
                         $route = 'fos_user_registration_confirmed';
+                        $message = $this->trans('registration.confirmed',array('%username%' => $user->getUserName()));
                     }
 
                     $this->setFlash('fos_user_success', 'registration.flash.user_created');
                     $url = $this->container->get('router')->generate($route);
                     $response = new JsonResponse();
                     $data = array(
-                        'message' => $this->trans('registration.confirmed',array('%username%' => $user->getUserName())),
+                        'message' => $message,
                         'targetUrl' => $url,
+                        'authUser' => $authUser,
                     );
                     $response->setData($data);
 
