@@ -35,7 +35,10 @@ class SecurityController extends BaseController
         }else{
             $form = $this->container->get('fos_user.registration.form');
         }
-        $csrf_token_register = $form->createView()->children['_token']->vars['value'];
+        $csrf_token_register = '';
+        if(isset($form->createView()->children['_token'])){
+            $csrf_token_register = $form->createView()->children['_token']->vars['value'];
+        }
         $data['csrf_token_register'] = $csrf_token_register;
         
         return parent::renderLogin($data);
