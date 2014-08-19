@@ -29,13 +29,5 @@
             </call>
         </service>
         
-        <service id="fos_user.registration.form.handler.default" class="Tecnocreaciones\Bundle\AjaxFOSUserBundle\Handler\RegistrationFormHandler" scope="request">
-            <argument type="service" id="fos_user.registration.form" />
-            <argument type="service" id="request" />
-            <argument type="service" id="fos_user.user_manager" />
-            <argument type="service" id="fos_user.mailer" />
-            <argument type="service" id="fos_user.util.token_generator" />
-            <argument type="service" id="event_dispatcher" />
-        </service>
     </services>
 </container>
