@@ -21,7 +21,7 @@ class AuthenticationFailureHandler extends DefaultAuthenticationFailureHandler
     
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception) {
         if($request->isXmlHttpRequest()){
-            $message = $exception->getMessage();
+            $message = $exception->getMessageKey();
             $messageTrans = $this->translator->trans($message,array(),'FOSUserBundle');
             if($messageTrans === $message){
                 $messageTrans = $this->translator->trans($message,array(),'security');
