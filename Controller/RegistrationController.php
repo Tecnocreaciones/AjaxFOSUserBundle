@@ -29,9 +29,8 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class RegistrationController extends BaseController
 {
-    public function registerAction()
+    public function registerAction(Request $request)
     {
-        $request = $this->container->get('request');
         if($request->isXmlHttpRequest()){
             $view = View::create();
             $view->setFormat('json');
