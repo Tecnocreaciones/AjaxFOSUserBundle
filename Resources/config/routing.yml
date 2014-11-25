@@ -1,0 +1,5 @@
+tecnocreaciones_ajax_fosuserbundle_resend_activate_link:
+    pattern:  /re-send-email-activate
+    defaults:
+        _controller: TecnocreacionesAjaxFOSUserBundle:Extra:reSendEmailActivate
+    requirements: { _method: POST }
