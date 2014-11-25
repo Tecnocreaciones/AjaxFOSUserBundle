@@ -1,0 +1,8 @@
+ajax_fos_user:
+    sending_activation: Enviando correo de activación
+    success:
+        send_activation_activation_link: El enlace de activación se envío con éxito.
+    error:
+        user_not_exist: El usuario con el correo electrónico "%email%", no existe.
+        already_activated: La cuenta con el correo electrónico "%email%" ya esta activada.
+        not_email: Debe ingresar el correo electrónico.
