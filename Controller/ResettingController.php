@@ -11,6 +11,8 @@
 
 namespace Tecnocreaciones\Bundle\AjaxFOSUserBundle\Controller;
 
+use Symfony\Component\HttpFoundation\Request;
+
 use FOS\UserBundle\Controller\ResettingController as BaseController;
 
 /**
