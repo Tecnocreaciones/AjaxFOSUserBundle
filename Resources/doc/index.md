@@ -8,6 +8,7 @@ The TecnocreacionesAjaxFOSUserBundle is a bundle that provides authentication an
 This version of the bundle requires Symfony 2.1+.
 [SecurityBundle](http://symfony.com/doc/current/book/security.html).
 [FOSUserBundle 2.0+](https://github.com/FriendsOfSymfony/FOSUserBundle).
+[FOSRestBundle](http://symfony.com/doc/current/bundles/FOSRestBundle/index.html).
 
 ## Installation
 
