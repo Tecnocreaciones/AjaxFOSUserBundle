@@ -13,8 +13,8 @@ namespace Tecnocreaciones\Bundle\AjaxFOSUserBundle\Controller;
 
 use FOS\RestBundle\View\View;
 use FOS\UserBundle\Controller\RegistrationController as BaseController;
-use Tecnocreaciones\Bundle\AjaxFOSUserBundle\Event\FilterUserResponseEvent;
-use Tecnocreaciones\Bundle\AjaxFOSUserBundle\Event\FormEvent;
+use FOS\UserBundle\Event\FilterUserResponseEvent;
+use FOS\UserBundle\Event\FormEvent;
 use Tecnocreaciones\Bundle\AjaxFOSUserBundle\Event\GetResponseUserEvent;
 use Tecnocreaciones\Bundle\AjaxFOSUserBundle\FOSUserEvents;
 use Symfony\Component\HttpFoundation\JsonResponse;
