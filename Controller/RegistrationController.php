@@ -94,15 +94,14 @@ class RegistrationController extends BaseController
 
                 $form = $formFactory->createForm();
                 $form->setData($user);
+                $form->handleRequest($request);
 
                 if ('POST' === $request->getMethod()) {
-                    $form->bind($request);
-
                     if ($form->isValid()) {
                         $targetUrl = '';
                         if($this->getSession()){
                             $session = $this->getSession();
-                            if(($token = $this->container->get('security.context')->getToken()) && is_a($token, 'Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken')){
+                            if(($token = $this->container->get('security.token_storage')->getToken()) && is_a($token, 'Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken')){
                                 $targetUrl = $session->get('_security.' .$token->getProviderKey(). '.target_path');
                             }
                         }
