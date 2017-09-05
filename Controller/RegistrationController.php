@@ -31,9 +31,6 @@ class RegistrationController extends BaseController
 {
     public function registerAction(Request $request)
     {
-        if (version_compare(\Symfony\Component\HttpKernel\Kernel::VERSION, '3', '<')) {
-            $request = $this->container->get('request');
-        }
         if($request->isXmlHttpRequest()){
             $view = View::create();
             $view->setFormat('json');
