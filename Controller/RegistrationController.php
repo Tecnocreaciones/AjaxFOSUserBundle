@@ -74,6 +74,57 @@ class RegistrationController extends BaseController
                     
                     return $response;
                 }
+            }elseif(\Symfony\Component\HttpKernel\Kernel::VERSION >= 3){
+                /** @var $formFactory \FOS\UserBundle\Form\Factory\FactoryInterface */
+                $formFactory = $this->container->get('fos_user.registration.form.factory');
+                /** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
+                $userManager = $this->container->get('fos_user.user_manager');
+                /** @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
+                $dispatcher = $this->container->get('event_dispatcher');
+
+                $user = $userManager->createUser();
+                $user->setEnabled(true);
+
+                $event = new GetResponseUserEvent($user, $request);
+                $dispatcher->dispatch(FOSUserEvents::REGISTRATION_INITIALIZE, $event);
+
+                if (null !== $event->getResponse()) {
+                    return $event->getResponse();
+                }
+
+                $form = $formFactory->createForm();
+                $form->setData($user);
+                $form->handleRequest($request);
+
+                if ('POST' === $request->getMethod()) {
+                    if ($form->isValid()) {
+                        $targetUrl = '';
+                        if($this->getSession()){
+                            $session = $this->getSession();
+                            if(($token = $this->container->get('security.token_storage')->getToken()) && is_a($token, 'Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken')){
+                                $targetUrl = $session->get('_security.' .$token->getProviderKey(). '.target_path');
+                            }
+                        }
+                        $event = new FormEvent($form, $request);
+                        $dispatcher->dispatch(FOSUserEvents::REGISTRATION_SUCCESS, $event);
+
+                        $userManager->updateUser($user);
+
+                        if (null === $response = $event->getResponse()) {
+                            $url = $this->container->get('router')->generate('fos_user_registration_confirmed');
+                            $response = new JsonResponse();
+                            $data = array(
+                                'message' => $this->trans('registration.confirmed',array('%username%' => $user->getUserName())),
+                                'targetUrl' => $targetUrl,
+                            );
+                            $response->setData($data);
+                        }
+
+                        $dispatcher->dispatch(FOSUserEvents::REGISTRATION_COMPLETED, new FilterUserResponseEvent($user, $request, $response));
+
+                        return $response;
+                    }
+                }
             }else{
                 /** @var $formFactory \FOS\UserBundle\Form\Factory\FactoryInterface */
                 $formFactory = $this->container->get('fos_user.registration.form.factory');
