@@ -13,8 +13,8 @@ namespace Tecnocreaciones\Bundle\AjaxFOSUserBundle\Controller;
 
 use FOS\RestBundle\View\View;
 use FOS\UserBundle\Controller\RegistrationController as BaseController;
-use Tecnocreaciones\Bundle\AjaxFOSUserBundle\Event\FilterUserResponseEvent;
-use Tecnocreaciones\Bundle\AjaxFOSUserBundle\Event\FormEvent;
+use FOS\UserBundle\Event\FilterUserResponseEvent;
+use FOS\UserBundle\Event\FormEvent;
 use Tecnocreaciones\Bundle\AjaxFOSUserBundle\Event\GetResponseUserEvent;
 use Tecnocreaciones\Bundle\AjaxFOSUserBundle\FOSUserEvents;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,9 +29,11 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class RegistrationController extends BaseController
 {
-    public function registerAction()
+    public function registerAction(Request $request)
     {
-        $request = $this->container->get('request');
+        if (version_compare(\Symfony\Component\HttpKernel\Kernel::VERSION, '3', '<')) {
+            $request = $this->container->get('request');
+        }
         if($request->isXmlHttpRequest()){
             $view = View::create();
             $view->setFormat('json');
@@ -74,7 +76,7 @@ class RegistrationController extends BaseController
                     
                     return $response;
                 }
-            }elseif(\Symfony\Component\HttpKernel\Kernel::VERSION >= 3){
+            }elseif(version_compare(\Symfony\Component\HttpKernel\Kernel::VERSION, '3') >= 0){
                 /** @var $formFactory \FOS\UserBundle\Form\Factory\FactoryInterface */
                 $formFactory = $this->container->get('fos_user.registration.form.factory');
                 /** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */

@@ -12,6 +12,7 @@
 namespace Tecnocreaciones\Bundle\AjaxFOSUserBundle\Controller;
 
 use FOS\UserBundle\Controller\ResettingController as BaseController;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of ResettingController
@@ -20,7 +21,7 @@ use FOS\UserBundle\Controller\ResettingController as BaseController;
  */
 class ResettingController extends BaseController
 {
-    public function sendEmailAction() {
+    public function sendEmailAction(Request $request) {
         $request = $this->container->get('request');
         if($request->isXmlHttpRequest()){
             $data = array();
