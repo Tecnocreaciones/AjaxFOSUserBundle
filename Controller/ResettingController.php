@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Request;
 class ResettingController extends BaseController
 {
     public function sendEmailAction(Request $request) {
-        $request = $this->container->get('request');
+        
         if($request->isXmlHttpRequest()){
             $data = array();
             $response = new \Symfony\Component\HttpFoundation\JsonResponse();
