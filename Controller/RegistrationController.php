@@ -95,7 +95,7 @@ class RegistrationController extends BaseController
                 $form->setData($user);
 
                 if ('POST' === $request->getMethod()) {
-                    $form->bind($request);
+                    $form->handleRequest($request);
 
                     if ($form->isValid()) {
                         $targetUrl = '';
